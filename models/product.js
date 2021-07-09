@@ -1,4 +1,4 @@
-/* const MongoConnect = require('./util/database').MongoConnect */
+const mongodb = require('mongodb')
 const getDB = require('../util/database').getDb
 
 class Product {
@@ -12,7 +12,8 @@ class Product {
   save(){
 
     const db = getDB();
-    db.collection('products').insertOne(this)
+    return db.collection('products')
+    .insertOne(this)
     .then( result => {
       console.log(result)
     })
@@ -22,31 +23,67 @@ class Product {
     })
 
   }
+
+  static fetchAll() {
+    const db = getDB();
+    return db.collection('products')
+    .find()
+    .toArray()
+    .then( products => {
+      console.log(products)
+      return products
+    })
+    .catch( err => {
+      console.log(err)
+    });
+  }
+
+  static findById(prodId){
+    const db = getDB()
+    return db.collection('products')
+    .find({_id: new mongodb.ObjectId(prodId)})
+    .next()
+    .then( product => {
+      console.log('from find by id', product)
+      return product
+    })
+    .catch( err => {
+      console.log(err)
+    });
+  }
+
+  static updateByID(prodId,updates){
+    const db = getDB()
+    return db.collection('products')
+    .updateOne( 
+      {_id: new mongodb.ObjectId(prodId)},    
+      {
+        $set: updates,
+        $currentDate: { lastModified: true }
+      }
+    )
+    .then( product => {
+      console.log('from update by id',product)
+      return product
+    })
+    .catch( err => {
+      console.log(err)
+    });
+  }
+
+  static deleteById(prodId){
+    const db = getDB()
+    return db.collection('products')
+    .deleteOne({_id: new mongodb.ObjectId(prodId)})
+    .then( product => {
+      console.log('from delete by id',product)
+      return product
+    })
+    .catch( err => {
+      console.log(err)
+    });
+  }
 }
 
-const Product = sequelize.define('product', {
-  id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    allowNull: false,
-    primaryKey: true
-  },
-  title: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-  price: {
-    type: Sequelize.DOUBLE,
-    allowNull: false,
-  },
-  imageUrl: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-  description: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  }
-});
 
 module.exports = Product;
