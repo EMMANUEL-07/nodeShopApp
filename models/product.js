@@ -1,6 +1,8 @@
 const mongodb = require('mongodb')
 const getDB = require('../util/database').getDb
 
+const ObjectId = mongodb.ObjectID
+
 class Product {
   constructor(title, price, description, imageUrl, userId){
     this.title = title;
@@ -42,7 +44,7 @@ class Product {
     .find({_id: new mongodb.ObjectId(prodId)})
     .next()
     .then( product => {
-      console.log('from find by id', product)
+      console.log('from find by id product', product)
       return product
     })
     .catch( err => {
