@@ -1,10 +1,11 @@
 const mongodb = require('mongodb');
 const MongoClient = mongodb.MongoClient
+const password = require('../keys').password
 
 let _db;
 
 const MongoConnect = (callback) => {
-   MongoClient.connect('mongodb+srv://Emmanuel:Cherish-123@emmanuellearn.2fofu.mongodb.net/shop?retryWrites=true&w=majority')
+   MongoClient.connect(`mongodb+srv://Emmanuel:${password}@emmanuellearn.2fofu.mongodb.net/shop?retryWrites=true&w=majority`)
    .then(client => {
       console.log('connected')
       _db = client.db()
